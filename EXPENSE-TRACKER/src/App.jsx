@@ -1,0 +1,40 @@
+import ExpenseForm from './ExpenseForm'
+import ExpenseLists from './ExpenseList'
+import './App.css'
+import { useState, useEffect } from "react"
+
+
+function App() {
+
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem("expenses")
+    return saved ? JSON.parse(saved) : [];
+  })
+
+
+  useEffect(() => {
+    localStorage.setItem("expenses", JSON.stringify(expenses))
+  }, [expenses])
+
+  const addExpense = (expense) => {
+    setExpenses((prev) => [...prev, expense])
+  }
+
+  const deleteExpense = (id) => {
+    setExpenses((prev) => prev.filter((item) => item.id != id))
+  }
+
+  const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0)
+
+  return (
+    <div class="app-container">
+      <h1>💰 Expense Tracker</h1>
+      <ExpenseForm onAddExpense={addExpense} />
+      <h3 class="total">Total Expense: ₹{totalExpenses.toFixed(2)}</h3>
+      <ExpenseLists expenses={expenses} onDelete={deleteExpense} />
+    </div>
+
+  )
+}
+
+export default App
